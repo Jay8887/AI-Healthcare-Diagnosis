@@ -63,4 +63,30 @@ public class PatientService {
 
         return convertToResponse(patient);
     }
+    public PatientResponse updatePatient(Long id, PatientRequest request) {
+
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        patient.setFullName(request.getFullName());
+        patient.setAge(request.getAge());
+        patient.setGender(request.getGender());
+        patient.setEmail(request.getEmail());
+        patient.setPhone(request.getPhone());
+        patient.setAddress(request.getAddress());
+        patient.setSymptoms(request.getSymptoms());
+
+        Patient updatedPatient = patientRepository.save(patient);
+
+        return convertToResponse(updatedPatient);
+    }
+    public String deletePatient(Long id) {
+
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        patientRepository.delete(patient);
+
+        return "Patient deleted successfully.";
+    }
 }
