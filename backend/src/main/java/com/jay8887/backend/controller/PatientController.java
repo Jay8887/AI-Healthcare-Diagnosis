@@ -4,7 +4,7 @@ import com.jay8887.backend.entity.Patient;
 import com.jay8887.backend.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -16,7 +16,7 @@ public class PatientController {
     private PatientService patientService;
 
     @PostMapping
-    public Patient addPatient(@RequestBody Patient patient) {
+    public Patient addPatient(@Valid @RequestBody Patient patient) {
         return patientService.savePatient(patient);
     }
 

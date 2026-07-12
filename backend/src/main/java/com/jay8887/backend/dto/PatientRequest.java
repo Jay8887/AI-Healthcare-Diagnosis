@@ -1,25 +1,17 @@
-package com.jay8887.backend.entity;
+package com.jay8887.backend.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-
 import lombok.Data;
 
-@Entity
-@Table(name = "patients")
 @Data
-public class Patient {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class PatientRequest {
 
     @NotBlank(message = "Full Name is required")
     private String fullName;
 
     @NotNull(message = "Age is required")
-    @Min(value = 1, message = "Age must be greater than 0")
-    @Max(value = 120, message = "Age cannot exceed 120")
+    @Min(value = 1)
+    @Max(value = 120)
     private Integer age;
 
     @NotBlank(message = "Gender is required")
@@ -27,7 +19,6 @@ public class Patient {
 
     @Email(message = "Invalid Email")
     @NotBlank(message = "Email is required")
-    @Column(unique = true)
     private String email;
 
     @NotBlank(message = "Phone Number is required")
@@ -37,6 +28,5 @@ public class Patient {
     private String address;
 
     @NotBlank(message = "Symptoms are required")
-    @Column(length = 1000)
     private String symptoms;
 }
