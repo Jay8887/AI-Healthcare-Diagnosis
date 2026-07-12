@@ -1,11 +1,14 @@
 package com.jay8887.backend.service;
 
+import com.jay8887.backend.dto.PatientRequest;
+import com.jay8887.backend.dto.PatientResponse;
 import com.jay8887.backend.entity.Patient;
 import com.jay8887.backend.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PatientService {
@@ -13,11 +16,51 @@ public class PatientService {
     @Autowired
     private PatientRepository patientRepository;
 
-    public Patient savePatient(Patient patient) {
-        return patientRepository.save(patient);
+    public PatientResponse savePatient(PatientRequest request) {
+
+        Patient patient = new Patient();
+
+        patient.setFullName(request.getFullName());
+        patient.setAge(request.getAge());
+        patient.setGender(request.getGender());
+        patient.setEmail(request.getEmail());
+        patient.setPhone(request.getPhone());
+        patient.setAddress(request.getAddress());
+        patient.setSymptoms(request.getSymptoms());
+
+        Patient savedPatient = patientRepository.save(patient);
+
+        return convertToResponse(savedPatient);
     }
 
-    public List<Patient> getAllPatients() {
-        return patientRepository.findAll();
+    public List<PatientResponse> getAllPatients() {
+
+        return patientRepository.findAll()
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    private PatientResponse convertToResponse(Patient patient) {
+
+        PatientResponse response = new PatientResponse();
+
+        response.setId(patient.getId());
+        response.setFullName(patient.getFullName());
+        response.setAge(patient.getAge());
+        response.setGender(patient.getGender());
+        response.setEmail(patient.getEmail());
+        response.setPhone(patient.getPhone());
+        response.setAddress(patient.getAddress());
+        response.setSymptoms(patient.getSymptoms());
+
+        return response;
+    }
+    public PatientResponse getPatientById(Long id) {
+
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        return convertToResponse(patient);
     }
 }
