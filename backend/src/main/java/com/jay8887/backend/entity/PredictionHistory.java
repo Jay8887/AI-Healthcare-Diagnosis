@@ -1,7 +1,8 @@
 package com.jay8887.backend.entity;
 
-import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,6 +18,16 @@ public class PredictionHistory {
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
+
+    private String riskLevel;
+
+    private String severity;
+
+    @Column(length = 1000)
+    private String description;
+
+    @Column(length = 1000)
+    private String recommendation;
 
     private boolean fever;
 
@@ -46,18 +57,10 @@ public class PredictionHistory {
     private String prediction;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
     private double confidence;
 
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
-    }
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
     public PredictionHistory() {
         this.createdAt = LocalDateTime.now();
@@ -73,6 +76,38 @@ public class PredictionHistory {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getRiskLevel() {
+        return riskLevel;
+    }
+
+    public void setRiskLevel(String riskLevel) {
+        this.riskLevel = riskLevel;
+    }
+
+    public String getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(String severity) {
+        this.severity = severity;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getRecommendation() {
+        return recommendation;
+    }
+
+    public void setRecommendation(String recommendation) {
+        this.recommendation = recommendation;
     }
 
     public boolean isFever() {
@@ -106,6 +141,7 @@ public class PredictionHistory {
     public void setFatigue(boolean fatigue) {
         this.fatigue = fatigue;
     }
+
     public boolean isSoreThroat() {
         return soreThroat;
     }
@@ -176,6 +212,14 @@ public class PredictionHistory {
 
     public void setPrediction(String prediction) {
         this.prediction = prediction;
+    }
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
     }
 
     public LocalDateTime getCreatedAt() {

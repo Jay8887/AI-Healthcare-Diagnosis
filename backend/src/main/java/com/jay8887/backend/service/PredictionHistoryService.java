@@ -55,6 +55,10 @@ public class PredictionHistoryService {
 
         history.setPrediction(response.getPrediction());
         history.setConfidence(response.getConfidence());
+        history.setRiskLevel(response.getRiskLevel());
+        history.setSeverity(response.getSeverity());
+        history.setDescription(response.getDescription());
+        history.setRecommendation(response.getRecommendation());
 
         repository.save(history);
     }
