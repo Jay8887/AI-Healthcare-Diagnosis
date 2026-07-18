@@ -7,6 +7,7 @@ import com.jay8887.backend.dto.RegisterResponse;
 import com.jay8887.backend.entity.User;
 import com.jay8887.backend.repository.UserRepository;
 import com.jay8887.backend.security.JwtService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,11 +15,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
-                       JwtService jwtService) {
+                       JwtService jwtService,
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public RegisterResponse register(RegisterRequest request) {
@@ -31,7 +35,7 @@ public class UserService {
 
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());   // BCrypt later
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole("PATIENT");
 
         userRepository.save(user);
@@ -44,7 +48,7 @@ public class UserService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getPassword().equals(request.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid Password");
         }
 
