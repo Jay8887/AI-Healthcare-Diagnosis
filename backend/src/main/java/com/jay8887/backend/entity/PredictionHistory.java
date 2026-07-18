@@ -1,8 +1,22 @@
-package com.jay8887.backend.dto.ai;
+package com.jay8887.backend.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.LocalDateTime;
 
-public class PredictionRequest {
+@Entity
+@Table(name = "prediction_history")
+public class PredictionHistory {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // Relationship with User
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
     private boolean fever;
 
@@ -12,10 +26,8 @@ public class PredictionRequest {
 
     private boolean fatigue;
 
-    @JsonProperty("sore_throat")
     private boolean soreThroat;
 
-    @JsonProperty("body_pain")
     private boolean bodyPain;
 
     private boolean nausea;
@@ -24,16 +36,43 @@ public class PredictionRequest {
 
     private boolean diarrhea;
 
-    @JsonProperty("chest_pain")
     private boolean chestPain;
 
-    @JsonProperty("shortness_of_breath")
     private boolean shortnessOfBreath;
 
-    @JsonProperty("loss_of_smell")
     private boolean lossOfSmell;
 
-    public PredictionRequest() {
+    @Column(nullable = false)
+    private String prediction;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private double confidence;
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
+    }
+
+    public PredictionHistory() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public boolean isFever() {
@@ -67,7 +106,6 @@ public class PredictionRequest {
     public void setFatigue(boolean fatigue) {
         this.fatigue = fatigue;
     }
-
     public boolean isSoreThroat() {
         return soreThroat;
     }
@@ -130,5 +168,21 @@ public class PredictionRequest {
 
     public void setLossOfSmell(boolean lossOfSmell) {
         this.lossOfSmell = lossOfSmell;
+    }
+
+    public String getPrediction() {
+        return prediction;
+    }
+
+    public void setPrediction(String prediction) {
+        this.prediction = prediction;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

@@ -1,33 +1,42 @@
 import pandas as pd
-from sklearn.tree import DecisionTreeClassifier
 import joblib
 
-# Sample training data
-data = {
-    "fever": [1,1,1,0,0,1,0,1],
-    "cough": [1,1,0,1,0,1,0,0],
-    "headache": [1,0,1,1,0,0,1,1],
-    "fatigue": [1,1,1,0,1,0,0,1],
-    "disease": [
-        "Flu",
-        "Flu",
-        "Flu",
-        "Cold",
-        "Healthy",
-        "Cold",
-        "Healthy",
-        "Flu"
+from sklearn.ensemble import RandomForestClassifier
+
+# Load Dataset
+df = pd.read_csv("data/disease_dataset.csv")
+
+# Features
+X = df[
+    [
+        "fever",
+        "cough",
+        "headache",
+        "fatigue",
+        "sore_throat",
+        "body_pain",
+        "nausea",
+        "vomiting",
+        "diarrhea",
+        "chest_pain",
+        "shortness_of_breath",
+        "loss_of_smell"
     ]
-}
+]
 
-df = pd.DataFrame(data)
-
-X = df[["fever", "cough", "headache", "fatigue"]]
+# Target
 y = df["disease"]
 
-model = DecisionTreeClassifier(random_state=42)
+# Train Random Forest
+model = RandomForestClassifier(
+    n_estimators=300,
+    random_state=42
+)
+
 model.fit(X, y)
 
+# Save Model
 joblib.dump(model, "model/disease_model.pkl")
 
 print("Model trained successfully!")
+print("Diseases:", sorted(y.unique()))
