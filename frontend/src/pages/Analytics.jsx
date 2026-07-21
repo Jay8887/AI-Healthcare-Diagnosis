@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
+
 import {
   PieChart,
   Pie,
@@ -7,8 +8,17 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
 } from "recharts";
-import { getDiseaseDistribution } from "../services/dashboardService";
+
+import {
+  getDiseaseDistribution,
+  getMonthlyTrends,
+} from "../services/dashboardService";
 
 const COLORS = [
   "#2563eb",
@@ -23,6 +33,7 @@ const COLORS = [
 
 function Analytics() {
   const [diseaseData, setDiseaseData] = useState([]);
+  const [monthlyData, setMonthlyData] = useState([]);
 
   useEffect(() => {
     loadData();
@@ -30,17 +41,28 @@ function Analytics() {
 
   const loadData = async () => {
     try {
-      const response = await getDiseaseDistribution();
+      // Disease Distribution
+      const diseaseResponse = await getDiseaseDistribution();
 
-      // Convert Map<String, Long> to array for Recharts
-      const formattedData = Object.entries(response).map(
+      const formattedDisease = Object.entries(diseaseResponse).map(
         ([disease, count]) => ({
           disease,
           count,
         })
       );
 
-      setDiseaseData(formattedData);
+      setDiseaseData(formattedDisease);
+
+      // Monthly Trends
+      const monthlyResponse = await getMonthlyTrends();
+
+      const formattedMonthly = monthlyResponse.map((item) => ({
+        month: item.month.substring(0, 3),
+        predictions: item.predictions,
+      }));
+
+      setMonthlyData(formattedMonthly);
+
     } catch (err) {
       console.error("Analytics Error:", err);
     }
@@ -52,7 +74,8 @@ function Analytics() {
         Analytics Dashboard
       </h1>
 
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      {/* Disease Distribution */}
+      <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
         <h2 className="text-2xl font-bold mb-6">
           Disease Distribution
         </h2>
@@ -79,6 +102,29 @@ function Analytics() {
             <Tooltip />
             <Legend />
           </PieChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Monthly Prediction Trends */}
+      <div className="bg-white rounded-xl shadow-lg p-8">
+        <h2 className="text-2xl font-bold mb-6">
+          Monthly Prediction Trends
+        </h2>
+
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={monthlyData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="predictions"
+              stroke="#2563eb"
+              strokeWidth={3}
+            />
+          </LineChart>
         </ResponsiveContainer>
       </div>
     </DashboardLayout>

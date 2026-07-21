@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { getPredictionHistory } from "../services/historyService";
+import { generatePredictionPDF } from "../utils/pdfGenerator";
 
 function History() {
   const [history, setHistory] = useState([]);
@@ -47,13 +48,22 @@ function History() {
           Prediction History
         </h1>
 
-        <input
-          type="text"
-          placeholder="Search disease..."
-          className="border rounded-lg px-4 py-2"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <div className="flex gap-3">
+          <input
+            type="text"
+            placeholder="Search disease..."
+            className="border rounded-lg px-4 py-2"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+
+          <button
+            onClick={() => generatePredictionPDF(filteredHistory)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg"
+          >
+            Download PDF
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -71,40 +81,49 @@ function History() {
 
           <tbody>
 
-            {filteredHistory.map((item) => (
+            {filteredHistory.length > 0 ? (
+              filteredHistory.map((item) => (
 
-              <tr
-                key={item.id}
-                className="border-b hover:bg-gray-50"
-              >
+                <tr
+                  key={item.id}
+                  className="border-b hover:bg-gray-50"
+                >
 
-                <td className="p-4">
-                  {item.prediction}
+                  <td className="p-4">
+                    {item.prediction}
+                  </td>
+
+                  <td>
+                    <span
+                      className={`text-white px-3 py-1 rounded-full ${badgeColor(
+                        item.riskLevel
+                      )}`}
+                    >
+                      {item.riskLevel}
+                    </span>
+                  </td>
+
+                  <td>
+                    {item.confidence}%
+                  </td>
+
+                  <td>
+                    {new Date(item.createdAt).toLocaleString()}
+                  </td>
+
+                </tr>
+
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan="4"
+                  className="text-center py-8 text-gray-500"
+                >
+                  No prediction history found.
                 </td>
-
-                <td>
-
-                  <span
-                    className={`text-white px-3 py-1 rounded-full ${badgeColor(
-                      item.riskLevel
-                    )}`}
-                  >
-                    {item.riskLevel}
-                  </span>
-
-                </td>
-
-                <td>
-                  {item.confidence}%
-                </td>
-
-                <td>
-                  {new Date(item.createdAt).toLocaleString()}
-                </td>
-
               </tr>
-
-            ))}
+            )}
 
           </tbody>
 
